@@ -2,186 +2,146 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Universal Content Quality Check</title>
+<title>Universal Content QA Dashboard</title>
 
 <style>
 
-/* ===============================
-   ROOT THEME VARIABLES
-================================ */
-
-:root{
-    --primary:#4f46e5;
-    --success:#16a34a;
-    --warning:#f59e0b;
-    --danger:#dc2626;
-    --dark:#0f172a;
-    --light:#f8fafc;
-    --card:#ffffff;
-    --border:#e2e8f0;
-}
-
-/* ===============================
-   GLOBAL STYLES
-================================ */
-
-*{
-    box-sizing:border-box;
-}
+/* ======================
+   GLOBAL STYLING
+====================== */
 
 body{
     margin:0;
-    font-family: "Segoe UI", Roboto, sans-serif;
-    background:linear-gradient(135deg,#eef2ff,#f8fafc);
-    color:var(--dark);
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background:#f3f5f9;
+    color:#1f2937;
 }
 
 header{
-    background:linear-gradient(90deg,var(--primary),#6366f1);
+    background:#111827;
     color:white;
-    padding:30px 20px;
-    text-align:center;
-    font-size:22px;
+    padding:20px 40px;
+    font-size:20px;
     font-weight:600;
-    letter-spacing:0.5px;
 }
 
 .container{
-    max-width:1200px;
-    margin:30px auto;
-    padding:0 20px;
+    padding:40px;
+    max-width:1400px;
+    margin:auto;
 }
-
-/* ===============================
-   GRID LAYOUT
-================================ */
-
-.grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:25px;
-}
-
-@media(max-width:900px){
-    .grid{
-        grid-template-columns:1fr;
-    }
-}
-
-/* ===============================
-   CARD DESIGN
-================================ */
-
-.card{
-    background:var(--card);
-    padding:25px;
-    border-radius:16px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.05);
-    border:1px solid var(--border);
-    margin-bottom:25px;
-}
-
-.card h3{
-    margin-top:0;
-    margin-bottom:15px;
-    font-size:16px;
-    font-weight:600;
-    color:#334155;
-}
-
-/* ===============================
-   TEXTAREAS
-================================ */
 
 textarea{
     width:100%;
-    height:230px;
+    height:180px;
     padding:15px;
-    border-radius:12px;
-    border:1px solid var(--border);
+    margin-bottom:20px;
+    border-radius:8px;
+    border:1px solid #d1d5db;
     font-size:14px;
-    resize:vertical;
-    transition:0.3s;
-}
-
-textarea:focus{
-    outline:none;
-    border-color:var(--primary);
-    box-shadow:0 0 0 3px rgba(79,70,229,0.1);
-}
-
-/* ===============================
-   BUTTON
-================================ */
-
-.button-wrapper{
-    text-align:center;
-    margin:30px 0;
+    background:white;
 }
 
 button{
-    padding:14px 35px;
-    background:var(--primary);
+    background:#2563eb;
     color:white;
+    padding:12px 30px;
     border:none;
-    border-radius:30px;
+    border-radius:8px;
     font-size:15px;
     cursor:pointer;
-    transition:0.3s;
+    font-weight:600;
 }
 
 button:hover{
-    transform:translateY(-2px);
-    box-shadow:0 8px 20px rgba(79,70,229,0.25);
+    background:#1d4ed8;
 }
 
-/* ===============================
-   REPORT STYLES
-================================ */
+/* ======================
+   DASHBOARD CARDS
+====================== */
 
-.summary{
-    background:#0f172a;
-    color:#22c55e;
-    padding:20px;
+.dashboard{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+    gap:20px;
+    margin-top:30px;
+}
+
+.card{
+    background:white;
+    padding:25px;
     border-radius:12px;
-    white-space:pre-wrap;
-    font-family:monospace;
+    box-shadow:0 4px 12px rgba(0,0,0,0.05);
+}
+
+.card h3{
+    margin:0 0 10px;
     font-size:14px;
+    color:#6b7280;
+    text-transform:uppercase;
+    letter-spacing:1px;
 }
 
-.exact{
-    color:var(--success);
-    font-weight:500;
+.metric{
+    font-size:32px;
+    font-weight:700;
 }
 
-.modified{
-    color:var(--warning);
-    font-weight:500;
+.green{color:#16a34a;}
+.orange{color:#f59e0b;}
+.red{color:#dc2626;}
+.blue{color:#2563eb;}
+
+/* ======================
+   PROGRESS BAR
+====================== */
+
+.progress{
+    height:10px;
+    background:#e5e7eb;
+    border-radius:10px;
+    overflow:hidden;
+    margin-top:10px;
 }
 
-.missing{
-    color:var(--danger);
-    font-weight:500;
+.progress-bar{
+    height:100%;
+    background:#16a34a;
+    width:0%;
 }
+
+/* ======================
+   SECTIONS
+====================== */
+
+.section{
+    margin-top:40px;
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.05);
+}
+
+.section h2{
+    margin-top:0;
+    font-size:18px;
+}
+
+/* Sentence breakdown styling */
+
+.exact{color:#16a34a; font-weight:500;}
+.modified{color:#f59e0b; font-weight:500;}
+.missing{color:#dc2626; font-weight:500;}
 
 .score{
-    font-weight:bold;
-    margin-top:12px;
-    color:var(--primary);
+    font-weight:600;
+    margin-top:10px;
 }
 
-/* ===============================
-   PRINT (A4 READY)
-================================ */
-
-@media print{
-    body{
-        background:white;
-    }
-    header{
-        background:white;
-        color:black;
-    }
+/* Responsive */
+@media(max-width:768px){
+    .container{padding:20px;}
 }
 
 </style>
@@ -189,58 +149,62 @@ button:hover{
 <body>
 
 <header>
-Website Content Implementation & Quality Audit System
+Universal Content Implementation & QA Dashboard
 </header>
 
 <div class="container">
 
-<div class="grid">
-
-<div class="card">
 <h3>Approved Content (Writer Version)</h3>
 <textarea id="input1"></textarea>
-</div>
 
-<div class="card">
 <h3>Website Content (Developer Version)</h3>
 <textarea id="input2"></textarea>
-</div>
 
-</div>
-
-<div class="button-wrapper">
 <button onclick="runAudit()">Run Full QA Audit</button>
+
+<!-- DASHBOARD METRICS -->
+<div class="dashboard">
+
+<div class="card">
+<h3>Completion Level</h3>
+<div class="metric green" id="completionMetric">0%</div>
+<div class="progress"><div class="progress-bar" id="completionBar"></div></div>
 </div>
 
 <div class="card">
-<h3>Universal Implementation Report</h3>
-<div id="universalReport" class="summary"></div>
+<h3>Overall Similarity</h3>
+<div class="metric blue" id="similarityMetric">0%</div>
 </div>
 
 <div class="card">
-<div id="sentenceBreakdown"></div>
+<h3>Exact Matches</h3>
+<div class="metric green" id="exactMetric">0</div>
 </div>
 
 <div class="card">
-<div id="structureReport"></div>
+<h3>Modified</h3>
+<div class="metric orange" id="modifiedMetric">0</div>
 </div>
 
 <div class="card">
-<div id="grammarReport1"></div>
+<h3>Missing</h3>
+<div class="metric red" id="missingMetric">0</div>
 </div>
 
-<div class="card">
-<div id="grammarReport2"></div>
 </div>
+
+<!-- DETAIL SECTIONS -->
+
+<div id="sentenceBreakdown" class="section"></div>
+<div id="structureReport" class="section"></div>
+<div id="grammarReport1" class="section"></div>
+<div id="grammarReport2" class="section"></div>
 
 </div>
 
 <script>
 
-/* ===========================
-   ALL ORIGINAL JS LOGIC
-   (UNCHANGED)
-=========================== */
+/* === ALL ORIGINAL LOGIC PRESERVED BELOW === */
 
 function splitSentences(text){
     return text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
@@ -274,7 +238,6 @@ function countRegex(text,regex){
 }
 
 function grammarCheck(text,target){
-
     let errors=[];
     let score=100;
 
@@ -295,7 +258,7 @@ function grammarCheck(text,target){
     if(score<0) score=0;
 
     let box=document.getElementById(target);
-    box.innerHTML="<h3>Grammar Quality Check</h3>";
+    box.innerHTML="<h2>Grammar Quality Check</h2>";
 
     if(errors.length===0){
         box.innerHTML+="No major grammar concerns detected.<br>";
@@ -317,7 +280,7 @@ function runAudit(){
     let webSent=splitSentences(website);
 
     let exact=0,modified=0,missing=0;
-    let breakdownHTML="<h3>Sentence Comparison Breakdown</h3>";
+    let breakdownHTML="<h2>Sentence Comparison Breakdown</h2>";
 
     writerSent.forEach((sentence,index)=>{
 
@@ -327,7 +290,6 @@ function runAudit(){
             exact++;
             breakdownHTML+=`<div class="exact">Sentence ${index+1}: EXACT MATCH</div>`;
         }else{
-
             let best=0;
             webSent.forEach(ws=>{
                 let sim=similarity(sentence,ws);
@@ -347,6 +309,16 @@ function runAudit(){
     let completion=((exact*1)+(modified*0.6))/writerSent.length*100;
     let overallSimilarity=similarity(writer,website);
 
+    /* Update Dashboard */
+    document.getElementById("completionMetric").innerText=completion.toFixed(2)+"%";
+    document.getElementById("similarityMetric").innerText=overallSimilarity.toFixed(2)+"%";
+    document.getElementById("exactMetric").innerText=exact;
+    document.getElementById("modifiedMetric").innerText=modified;
+    document.getElementById("missingMetric").innerText=missing;
+    document.getElementById("completionBar").style.width=completion+"%";
+
+    document.getElementById("sentenceBreakdown").innerHTML=breakdownHTML;
+
     let scripts=countRegex(website,/<script[\s\S]*?>[\s\S]*?<\/script>/gi);
     let urls=countRegex(website,/https?:\/\/[^\s]+|www\.[^\s]+/gi);
     let emails=countRegex(website,/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i);
@@ -354,36 +326,8 @@ function runAudit(){
     let lists=countRegex(website,/^\s*[-*•]\s+/gm)+countRegex(website,/^\s*\d+\.\s+/gm);
     let htmlTags=countRegex(website,/<\/?[a-z][\s\S]*?>/gi);
 
-    document.getElementById("universalReport").textContent=
-`CONTENT IMPLEMENTATION REPORT
---------------------------------
-
-Content Completion Level: ${completion.toFixed(2)}%
-
-What Was Implemented Correctly:
-- ${exact} sentences copied exactly as approved.
-
-What Was Modified:
-- ${modified} sentences slightly changed.
-
-What Is Missing:
-- ${missing} sentences not found in website version.
-
-Overall Content Similarity: ${overallSimilarity.toFixed(2)}%
-
-Conclusion:
-${completion>95 ? 
-"Developer has successfully implemented almost all approved content." :
-completion>75 ?
-"Most content is implemented but review recommended." :
-"Significant differences detected. Manual review required."
-}
-`;
-
-    document.getElementById("sentenceBreakdown").innerHTML=breakdownHTML;
-
     document.getElementById("structureReport").innerHTML=
-`<h3>Website Structural & Technical Elements</h3>
+`<h2>Website Structural & Technical Elements</h2>
 Script Tags: ${scripts}<br>
 URLs: ${urls}<br>
 Emails: ${emails}<br>
