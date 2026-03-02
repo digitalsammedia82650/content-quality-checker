@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Content Comparison &  Quality Checker</title>
+
+<style>
+body{font-family:Arial;background:#f4f6f9;padding:25px;}
+h1{text-align:center;color:#1e2a38;}
+textarea{width:100%;height:180px;padding:12px;margin-bottom:15px;font-size:14px;}
+button{padding:12px 22px;background:#1e88e5;color:white;border:none;cursor:pointer;}
+button:hover{background:#1565c0;}
+.section{background:white;padding:20px;margin-top:20px;border-radius:6px;}
+.summary{background:#000;color:#0f0;padding:15px;margin-top:20px;white-space:pre-wrap;}
+.error{color:#c62828;margin-bottom:8px;}
+.correct{color:#2e7d32;}
+.score{font-size:18px;font-weight:bold;margin-top:10px;}
+</style>
+</head>
+<body>
+
+<h1>Website Content QA & Grammar Intelligence System</h1>
+
+<h3>Approved Content (Writer Version)</h3>
+<textarea id="input1"></textarea>
+
+<h3>Website Content (Developer Version)</h3>
+<textarea id="input2"></textarea>
+
+<button onclick="runAudit()">Run Full QA Audit</button>
+
+<div id="contentReport" class="summary"></div>
+<div id="structureReport" class="section"></div>
+<div id="grammarReport1" class="section"></div>
+<div id="grammarReport2" class="section"></div>
+
+<script>
+
+/* =============================
+   BASIC UTILITIES
+============================= */
+
+function splitSentences(text){
+return text.match(/[^.!?]+[.!?]+/g)||[];
+}
+
+function similarity(a,b){
+let longer=a.length>b.length?a:b;
+let shorter=a.length>b.length?b:a;
+if(longer.length===0) return 100;
+return ((longer.length-levenshtein(longer,shorter))/longer.length)*100;
+}
+
+function levenshtein(a,b){
+let m=[];
+for(let i=0;i<=b.length;i++){m[i]=[i];}
+for(let j=0;j<=a.length;j++){m[0][j]=j;}
+for(let i=1;i<=b.length;i++){
+for(let j=1;j<=a.length;j++){
+m[i][j]=(b[i-1]==a[j-1])?
+m[i-1][j-1]:
+Math.min(m[i-1][j-1]+1,m[i][j-1]+1,m[i-1][j]+1);
+}}
+return m[b.length][a.length];
+}
+
+/* =============================
+   STRUCTURE & SCRIPT DETECTION
+============================= */
+
+function detectScripts(text){
+let scripts=text.match(/<script[\s\S]*?>[\s\S]*?<\/script>/gi)||[];
+return scripts.length;
+}
+
+function detectURLs(text){
+let urls=text.match(/https?:\/\/[^\s]+|www\.[^\s]+/gi)||[];
+return urls.length;
+}
+
+function detectEmails(text){
+let emails=text.match(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i)||[];
+return emails.length;
+}
+
+function detectNumbers(text){
+let nums=text.match(/\b\d+(\.\d+)?%?\b/g)||[];
+return nums.length;
+}
+
+function detectLists(text){
+let bullets=text.match(/^\s*[-*•]\s+/gm)||[];
+let ordered=text.match(/^\s*\d+\.\s+/gm)||[];
+return bullets.length+ordered.length;
+}
+
+function detectHTML(text){
+let tags=text.match(/<\/?[a-z][\s\S]*?>/gi)||[];
+return tags.length;
+}
+
+/* =============================
+   GRAMMAR ENGINE (Simplified)
+============================= */
+
+function grammarCheck(text,target){
+
+let errors=[];
+let score=100;
+
+function add(msg,severity){
+let penalty=severity==="critical"?10:severity==="major"?5:2;
+score-=penalty;
+errors.push(msg+" ("+severity+")");
+}
+
+// Basic checks
+if(/\bnot\s+never\b/i.test(text)) add("Double negative detected","major");
+if(/\breturn back\b/i.test(text)) add("Redundant phrase detected","minor");
+if(/\bhave\s+\w+\b/i.test(text)&&!/\bhave\s+\w+ed\b/i.test(text))
+add("Possible incorrect past participle after 'have'","critical");
+
+if(score<0) score=0;
+
+let box=document.getElementById(target);
+box.innerHTML="<h3>Grammar Report</h3>";
+
+if(errors.length===0){
+box.innerHTML+="<div class='correct'>No major grammar issues detected.</div>";
+}else{
+errors.forEach(e=>{
+box.innerHTML+="<div class='error'>"+e+"</div>";
+});
+}
+
+box.innerHTML+="<div class='score'>Grammar Score: "+score+"/100</div>";
+}
+
+/* =============================
+   MAIN AUDIT
+============================= */
+
+function runAudit(){
+
+let writer=document.getElementById("input1").value.trim();
+let website=document.getElementById("input2").value.trim();
+
+let writerSent=splitSentences(writer);
+let webSent=splitSentences(website);
+
+let exact=0,modified=0,missing=0;
+
+writerSent.forEach(sentence=>{
+let found=webSent.find(s=>s.trim()===sentence.trim());
+if(found) exact++;
+else{
+let best=0;
+webSent.forEach(ws=>{
+let s=similarity(sentence,ws);
+if(s>best) best=s;
+});
+if(best>60) modified++;
+else missing++;
+}
+});
+
+let completion=((exact*1)+(modified*0.6))/writerSent.length*100;
+let similarityScore=similarity(writer,website);
+
+// Structure detection
+let scriptCount=detectScripts(website);
+let urlCount=detectURLs(website);
+let emailCount=detectEmails(website);
+let numberCount=detectNumbers(website);
+let listCount=detectLists(website);
+let htmlCount=detectHTML(website);
+
+// CONTENT SUMMARY
+document.getElementById("contentReport").textContent=
+`CONTENT IMPLEMENTATION REPORT
+--------------------------------
+Completion Score: ${completion.toFixed(2)}%
+Exact Sentences: ${exact}
+Modified Sentences: ${modified}
+Missing Sentences: ${missing}
+
+Overall Similarity: ${similarityScore.toFixed(2)}%
+`;
+
+// STRUCTURE REPORT
+document.getElementById("structureReport").innerHTML=
+`<h3>Website Structural Analysis</h3>
+Script Tags Detected: ${scriptCount}<br>
+URLs Detected: ${urlCount}<br>
+Emails Detected: ${emailCount}<br>
+Numbers/Stats Detected: ${numberCount}<br>
+List Items Detected: ${listCount}<br>
+HTML Tags Detected: ${htmlCount}
+`;
+
+// Grammar check both
+grammarCheck(writer,"grammarReport1");
+grammarCheck(website,"grammarReport2");
+}
+
+</script>
+
+</body>
+</html>
