@@ -5,98 +5,241 @@
 <title>Universal Content Implementation & QA System</title>
 
 <style>
-body{
-    font-family:Arial, sans-serif;
-    background:#f4f6f9;
-    padding:20px;
-    line-height:1.6;
+
+/* ===============================
+   ROOT THEME VARIABLES
+================================ */
+
+:root{
+    --primary:#4f46e5;
+    --success:#16a34a;
+    --warning:#f59e0b;
+    --danger:#dc2626;
+    --dark:#0f172a;
+    --light:#f8fafc;
+    --card:#ffffff;
+    --border:#e2e8f0;
 }
 
-h1{
-    text-align:center;
-    color:#1e2a38;
+/* ===============================
+   GLOBAL STYLES
+================================ */
+
+*{
+    box-sizing:border-box;
 }
+
+body{
+    margin:0;
+    font-family: "Segoe UI", Roboto, sans-serif;
+    background:linear-gradient(135deg,#eef2ff,#f8fafc);
+    color:var(--dark);
+}
+
+header{
+    background:linear-gradient(90deg,var(--primary),#6366f1);
+    color:white;
+    padding:30px 20px;
+    text-align:center;
+    font-size:22px;
+    font-weight:600;
+    letter-spacing:0.5px;
+}
+
+.container{
+    max-width:1200px;
+    margin:30px auto;
+    padding:0 20px;
+}
+
+/* ===============================
+   GRID LAYOUT
+================================ */
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:25px;
+}
+
+@media(max-width:900px){
+    .grid{
+        grid-template-columns:1fr;
+    }
+}
+
+/* ===============================
+   CARD DESIGN
+================================ */
+
+.card{
+    background:var(--card);
+    padding:25px;
+    border-radius:16px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.05);
+    border:1px solid var(--border);
+    margin-bottom:25px;
+}
+
+.card h3{
+    margin-top:0;
+    margin-bottom:15px;
+    font-size:16px;
+    font-weight:600;
+    color:#334155;
+}
+
+/* ===============================
+   TEXTAREAS
+================================ */
 
 textarea{
     width:100%;
-    height:220px;
-    padding:12px;
-    margin-bottom:15px;
+    height:230px;
+    padding:15px;
+    border-radius:12px;
+    border:1px solid var(--border);
     font-size:14px;
-    border-radius:6px;
-    border:1px solid #ccc;
+    resize:vertical;
+    transition:0.3s;
+}
+
+textarea:focus{
+    outline:none;
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px rgba(79,70,229,0.1);
+}
+
+/* ===============================
+   BUTTON
+================================ */
+
+.button-wrapper{
+    text-align:center;
+    margin:30px 0;
 }
 
 button{
-    padding:12px 25px;
-    background:#1e88e5;
+    padding:14px 35px;
+    background:var(--primary);
     color:white;
     border:none;
+    border-radius:30px;
+    font-size:15px;
     cursor:pointer;
-    font-size:16px;
-    border-radius:5px;
+    transition:0.3s;
 }
 
 button:hover{
-    background:#1565c0;
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(79,70,229,0.25);
 }
 
-.section{
-    background:white;
-    padding:20px;
-    margin-top:20px;
-    border-radius:6px;
-}
+/* ===============================
+   REPORT STYLES
+================================ */
 
 .summary{
-    background:#111;
-    color:#0f0;
+    background:#0f172a;
+    color:#22c55e;
     padding:20px;
-    margin-top:20px;
+    border-radius:12px;
     white-space:pre-wrap;
     font-family:monospace;
-    border-radius:6px;
+    font-size:14px;
 }
 
-.exact{color:#2e7d32;}
-.modified{color:#f57c00;}
-.missing{color:#c62828;}
+.exact{
+    color:var(--success);
+    font-weight:500;
+}
+
+.modified{
+    color:var(--warning);
+    font-weight:500;
+}
+
+.missing{
+    color:var(--danger);
+    font-weight:500;
+}
 
 .score{
     font-weight:bold;
-    margin-top:10px;
+    margin-top:12px;
+    color:var(--primary);
 }
+
+/* ===============================
+   PRINT (A4 READY)
+================================ */
 
 @media print{
     body{
-        width:210mm;
-        height:297mm;
+        background:white;
+    }
+    header{
+        background:white;
+        color:black;
     }
 }
+
 </style>
 </head>
 <body>
 
-<h1>Website Content Implementation & Quality Audit System</h1>
+<header>
+Website Content Implementation & Quality Audit System
+</header>
 
+<div class="container">
+
+<div class="grid">
+
+<div class="card">
 <h3>Approved Content (Writer Version)</h3>
 <textarea id="input1"></textarea>
+</div>
 
+<div class="card">
 <h3>Website Content (Developer Version)</h3>
 <textarea id="input2"></textarea>
+</div>
 
+</div>
+
+<div class="button-wrapper">
 <button onclick="runAudit()">Run Full QA Audit</button>
+</div>
 
+<div class="card">
+<h3>Universal Implementation Report</h3>
 <div id="universalReport" class="summary"></div>
-<div id="sentenceBreakdown" class="section"></div>
-<div id="structureReport" class="section"></div>
-<div id="grammarReport1" class="section"></div>
-<div id="grammarReport2" class="section"></div>
+</div>
+
+<div class="card">
+<div id="sentenceBreakdown"></div>
+</div>
+
+<div class="card">
+<div id="structureReport"></div>
+</div>
+
+<div class="card">
+<div id="grammarReport1"></div>
+</div>
+
+<div class="card">
+<div id="grammarReport2"></div>
+</div>
+
+</div>
 
 <script>
 
 /* ===========================
-   UTILITIES
+   ALL ORIGINAL JS LOGIC
+   (UNCHANGED)
 =========================== */
 
 function splitSentences(text){
@@ -126,17 +269,9 @@ function similarity(a,b){
     return ((longer.length-levenshtein(longer,shorter))/longer.length)*100;
 }
 
-/* ===========================
-   STRUCTURE DETECTION
-=========================== */
-
 function countRegex(text,regex){
     return (text.match(regex)||[]).length;
 }
-
-/* ===========================
-   GRAMMAR ENGINE (Basic)
-=========================== */
 
 function grammarCheck(text,target){
 
@@ -172,10 +307,6 @@ function grammarCheck(text,target){
 
     box.innerHTML+="<div class='score'>Grammar Score: "+score+"/100</div>";
 }
-
-/* ===========================
-   MAIN AUDIT FUNCTION
-=========================== */
 
 function runAudit(){
 
@@ -216,15 +347,12 @@ function runAudit(){
     let completion=((exact*1)+(modified*0.6))/writerSent.length*100;
     let overallSimilarity=similarity(writer,website);
 
-    /* Structure Analysis */
     let scripts=countRegex(website,/<script[\s\S]*?>[\s\S]*?<\/script>/gi);
     let urls=countRegex(website,/https?:\/\/[^\s]+|www\.[^\s]+/gi);
     let emails=countRegex(website,/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i);
     let numbers=countRegex(website,/\b\d+(\.\d+)?%?\b/g);
     let lists=countRegex(website,/^\s*[-*•]\s+/gm)+countRegex(website,/^\s*\d+\.\s+/gm);
     let htmlTags=countRegex(website,/<\/?[a-z][\s\S]*?>/gi);
-
-    /* UNIVERSAL HUMAN REPORT */
 
     document.getElementById("universalReport").textContent=
 `CONTENT IMPLEMENTATION REPORT
